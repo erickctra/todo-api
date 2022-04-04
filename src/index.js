@@ -164,4 +164,17 @@ app.put(
   }
 );
 
+app.delete(
+  "/todo/:id",
+  checksExistsUserAccount,
+  checksTodoExists,
+  (request, response) => {
+    const { user, todo } = request;
+
+    user.todo.splice(todo, 1);
+
+    return response.status(200).send();
+  }
+);
+
 app.listen(3333);
