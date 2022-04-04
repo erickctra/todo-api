@@ -41,7 +41,7 @@ function checksTodoExists(request, response, next) {
   if (!validator.isUUID(id) || exitsTodo.length === 0) {
     return response.status(400).json({ error: "UUID not valid or not exist" });
   }
-  request.todo = exitsTodo;
+  request.todo = exitsTodo[0];
   return next();
 }
 
@@ -147,7 +147,18 @@ app.put(
 
     todo.title = title;
     todo.description = description;
-    todo.done = done;
+
+    return response.status(200).send();
+  }
+);
+
+app.put(
+  "/todo/done/:id",
+  checksExistsUserAccount,
+  checksTodoExists,
+  (request, response) => {
+    const { todo } = request;
+    todo.done = !todo.done;
 
     return response.status(200).send();
   }
