@@ -19,7 +19,7 @@ function checksExistsUserAccount(request, response, next) {
   return next();
 }
 
-function checksCreateTodosUserAvailability(request, respone, next) {
+function checksCreateTodosUserAvailability(request, response, next) {
   const { user } = request;
 
   if (user.todo.length === 9 && user.pro === false) {
@@ -41,6 +41,17 @@ function checksTodoExists(request, response, next) {
     return response.status(400).json({ error: "UUID not valid or not exist" });
   }
   request.todo = exitsTodo;
+  return next();
+}
+
+function findUserById(request, response, next) {
+  const { id } = request.params;
+
+  const existUser = users.filter((user) => user.id === id);
+  if (!validator.isUUID(id) && !existUser) {
+    return response.status(400).json({ error: "UUID not valid or not exist" });
+  }
+  request.user = existUser;
   return next();
 }
 
@@ -103,5 +114,17 @@ app.get(
     return response.status(200).json(todo);
   }
 );
+
+app.get("/user/:id", findUserById, (request, response) => {
+  const { user } = request;
+
+  return response.status(200).json(user);
+});
+
+app.get("/user", checksExistsUserAccount, (request, response) => {
+  const { user } = request;
+
+  return response.status(200).json(user);
+});
 
 app.listen(3333);
