@@ -1,5 +1,6 @@
 const express = require("express");
 const { v4: uuidv4 } = require("uuid");
+const validator = require("validator");
 
 const app = express();
 app.use(express.json());
@@ -27,6 +28,19 @@ function checksCreateTodosUserAvailability(request, respone, next) {
       .json({ unauthorized: "Free plan has limit to 10 todos" });
   }
 
+  return next();
+}
+
+function checksTodoExists(request, response, next) {
+  const { username } = request.headers;
+  const { id } = request.params;
+  const { user } = request;
+
+  const exitsTodo = user.todo.filter((todo) => todo.id === id);
+  if (!validator.isUUID(id) && !exitsTodo) {
+    return response.status(400).json({ error: "UUID not valid or not exist" });
+  }
+  request.todo = exitsTodo;
   return next();
 }
 
@@ -78,5 +92,16 @@ app.get("/todo", checksExistsUserAccount, (request, response) => {
 
   return response.status(200).json(list);
 });
+
+app.get(
+  "/todo/:id",
+  checksExistsUserAccount,
+  checksTodoExists,
+  (request, response) => {
+    const { todo } = request;
+
+    return response.status(200).json(todo);
+  }
+);
 
 app.listen(3333);
