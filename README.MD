@@ -14,6 +14,6 @@ The following tools were used in building the project:
 - [X] Create user.
 - [X] Create a new to-do.
 - [X] List all to-do.
-- [ ] Change a to-do title and deadline.
-- [ ] Mark a to-do as done.
+- [X] Change a to-do title and deadline.
+- [] Mark a to-do as done.
 - [ ] Delete to-do.

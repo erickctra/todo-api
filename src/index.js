@@ -1,3 +1,5 @@
+const { request } = require("express");
+const { response } = require("express");
 const express = require("express");
 const { v4: uuidv4 } = require("uuid");
 const validator = require("validator");
@@ -32,12 +34,11 @@ function checksCreateTodosUserAvailability(request, response, next) {
 }
 
 function checksTodoExists(request, response, next) {
-  const { username } = request.headers;
   const { id } = request.params;
   const { user } = request;
 
   const exitsTodo = user.todo.filter((todo) => todo.id === id);
-  if (!validator.isUUID(id) && !exitsTodo) {
+  if (!validator.isUUID(id) || exitsTodo.length === 0) {
     return response.status(400).json({ error: "UUID not valid or not exist" });
   }
   request.todo = exitsTodo;
@@ -126,5 +127,30 @@ app.get("/user", checksExistsUserAccount, (request, response) => {
 
   return response.status(200).json(user);
 });
+
+app.put(
+  "/todo/:id",
+  checksExistsUserAccount,
+  checksTodoExists,
+  (request, response) => {
+    const { title, description } = request.body;
+    const { todo } = request;
+    console.log(request.body);
+
+    if (
+      !Object.entries(request.body).length > 0 ||
+      title === "" ||
+      description === ""
+    ) {
+      return response.status(400).json({ error: "values cannot be null" });
+    }
+
+    todo.title = title;
+    todo.description = description;
+    todo.done = done;
+
+    return response.status(200).send();
+  }
+);
 
 app.listen(3333);
