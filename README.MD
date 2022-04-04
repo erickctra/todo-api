@@ -11,6 +11,7 @@ The following tools were used in building the project:
 
 ## Functions implemented  
 
+- [X] Create user.
 - [ ] Create a new to-do.
 - [ ] List all to-do.
 - [ ] Change a to-do title and deadline.
